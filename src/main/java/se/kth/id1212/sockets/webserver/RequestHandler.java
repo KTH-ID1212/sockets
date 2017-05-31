@@ -27,25 +27,19 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * A very simple HTTP server. All it can do is deliver a file in response to an HTTP GET request.
  */
-public class RequestHandler implements Runnable {
+class RequestHandler implements Runnable {
     private static final String SERVER_ID_HEADER = "Server: Httpd 1.0";
     private static final String HTTP_GET_METHOD = "GET";
     private static final String HTTP_OK_RESPONSE = "HTTP/1.0 200 OK";
@@ -53,8 +47,8 @@ public class RequestHandler implements Runnable {
     private static final String NOT_FOUND_HTML = "<HTML><HEAD><TITLE>File Not Found</TITLE></HEAD><BODY><H1>HTTP Error 404: File Not Found</H1></BODY></HTML>";
     private static final String HTTP_NOT_IMPL_RESPONSE = "HTTP/1.0 501 Not Implemented";
     private static final String NOT_IMPL_HTML = "<HTML><HEAD><TITLE>Not Implemented</TITLE></HEAD><BODY><H1>HTTP Error 501: Not Implemented</H1></BODY></HTML>";
-    private Socket clientSock;
-    private File rootDir;
+    private final Socket clientSock;
+    private final File rootDir;
 
     RequestHandler(Socket clientSock, File rootDir) {
         this.clientSock = clientSock;

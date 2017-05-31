@@ -21,31 +21,54 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package se.kth.id1212.sockets.webserver;
+package se.kth.id1212.sockets.textprotocolchat.server.net;
 
-import java.net.Socket;
-import java.net.ServerSocket;
 import java.io.IOException;
-import java.io.File;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketException;
+import java.util.ArrayList;
+import java.util.List;
+import se.kth.id1212.sockets.textprotocolchat.server.controller.Controller;
 
 /**
- * A simple HTTP server.
+ * Receives chat messages and broadcasts them to all chat clients. All communication to/from any
+ * chat node pass this server.
  */
-public class HttpServer {
+public class ChatServer {
     private static final int LINGER_TIME = 5000;
-    private File rootDir = new File("www");
+    private final Controller contr = new Controller();
+    private final List<ClientHandler> clients = new ArrayList<>();
     private int portNo = 8080;
 
     /**
-     * @param args The first command line argument is the directory where the server will look for
-     *             requested files, the default value is <code>www</code>. The second argument is
-     *             the port number on which the server will listen, the default is
-     *             <code>8080</code>.
+     * @param args Takes one command line argument, the number of the port on which the server will
+     *             listen, the default is <code>8080</code>.
      */
     public static void main(String[] args) {
-        HttpServer server = new HttpServer();
+        ChatServer server = new ChatServer();
         server.parseArguments(args);
         server.serve();
+    }
+
+    /**
+     * Sends the specified message to all connected clients
+     *
+     * @param msg The message to broadcast.
+     */
+    synchronized void broadcast(String msg) {
+        contr.appendEntry(msg);
+        clients.forEach((client) -> client.sendMsg(msg));
+    }
+
+    /**
+     * The chat client handled by the specified <code>ClientHandler</code> has disconnected from the
+     * server, and shall not participate in any future communication.
+     *
+     * @param handler The handler of the disconnected client.
+     */
+    synchronized void removeHandler(ClientHandler handler) {
+        clients.remove(handler);
     }
 
     private void serve() {
@@ -53,21 +76,26 @@ public class HttpServer {
             ServerSocket listeningSocket = new ServerSocket(portNo);
             while (true) {
                 Socket clientSocket = listeningSocket.accept();
-                clientSocket.setSoLinger(true, LINGER_TIME);
-                Thread handler = new Thread(new RequestHandler(clientSocket, rootDir));
-                handler.setPriority(Thread.MAX_PRIORITY);
-                handler.start();
+                startHandler(clientSocket);
             }
         } catch (IOException e) {
             System.err.println("Server failure.");
         }
     }
 
+    private void startHandler(Socket clientSocket) throws SocketException {
+        clientSocket.setSoLinger(true, LINGER_TIME);
+        ClientHandler handler = new ClientHandler(this, clientSocket, contr.getConversation());
+        synchronized (clients) {
+            clients.add(handler);
+        }
+        Thread handlerThread = new Thread(handler);
+        handlerThread.setPriority(Thread.MAX_PRIORITY);
+        handlerThread.start();
+    }
+
     private void parseArguments(String[] arguments) {
         if (arguments.length > 0) {
-            rootDir = new File(arguments[0]);
-        }
-        if (arguments.length > 1) {
             try {
                 portNo = Integer.parseInt(arguments[1]);
             } catch (NumberFormatException e) {
