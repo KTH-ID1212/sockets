@@ -21,13 +21,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package se.kth.id1212.sockets.textprotocolchat.client.controller;
+package se.kth.id1212.sockets.objprotocolchat.client.controller;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.concurrent.CompletableFuture;
-import se.kth.id1212.sockets.textprotocolchat.client.net.ServerConnection;
-import se.kth.id1212.sockets.textprotocolchat.client.net.OutputHandler;
+import se.kth.id1212.sockets.objprotocolchat.client.net.ServerConnection;
+import se.kth.id1212.sockets.objprotocolchat.client.net.OutputHandler;
 
 /**
  * This controller decouples the view from the network layer. All methods, except
@@ -39,7 +39,7 @@ public class Controller {
 
     /**
      * @see ServerConnection#connect(java.lang.String, int,
-     * se.kth.id1212.sockets.textprotocolchat.client.net.OutputHandler)
+     * se.kth.id1212.sockets.objprotocolchat.client.net.OutputHandler)
      */
     public void connect(String host, int port, OutputHandler outputHandler) {
         CompletableFuture.runAsync(() -> {
