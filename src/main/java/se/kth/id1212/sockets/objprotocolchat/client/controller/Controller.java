@@ -26,6 +26,8 @@ package se.kth.id1212.sockets.objprotocolchat.client.controller;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.concurrent.CompletableFuture;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import se.kth.id1212.sockets.objprotocolchat.client.net.ServerConnection;
 import se.kth.id1212.sockets.objprotocolchat.client.net.OutputHandler;
 
@@ -62,13 +64,25 @@ public class Controller {
      * @see ServerConnection#sendUsername(java.lang.String)
      */
     public void sendUsername(String username) {
-        CompletableFuture.runAsync(() -> serverConnection.sendUsername(username));
+        CompletableFuture.runAsync(() -> {
+            try {
+                serverConnection.sendUsername(username);
+            } catch (IOException ioe) {
+                throw new UncheckedIOException(ioe);
+            }
+        });
     }
 
     /**
      * @see ServerConnection#sendChatEntry(java.lang.String)
      */
     public void sendMsg(String msg) {
-        CompletableFuture.runAsync(() -> serverConnection.sendChatEntry(msg));
+        CompletableFuture.runAsync(() -> {
+            try {
+                serverConnection.sendChatEntry(msg);
+            } catch (IOException ioe) {
+                throw new UncheckedIOException(ioe);
+            }
+        });
     }
 }
