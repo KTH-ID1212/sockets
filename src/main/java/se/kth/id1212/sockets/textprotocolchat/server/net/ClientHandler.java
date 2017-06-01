@@ -89,8 +89,8 @@ class ClientHandler implements Runnable {
                         server.broadcast(username + USERNAME_DELIMETER + msg.msgBody);
                         break;
                     case DISCONNECT:
-                        server.broadcast(username + LEAVE_MESSAGE);
                         disconnectClient();
+                        server.broadcast(username + LEAVE_MESSAGE);
                         break;
                     default:
                         throw new MessageException("Received corrupt message: " + msg.receivedString);
