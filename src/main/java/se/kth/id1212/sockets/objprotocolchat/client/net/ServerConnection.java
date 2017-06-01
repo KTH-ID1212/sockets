@@ -26,6 +26,7 @@ package se.kth.id1212.sockets.objprotocolchat.client.net;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import se.kth.id1212.sockets.objprotocolchat.common.Message;
 import se.kth.id1212.sockets.objprotocolchat.common.MessageException;
@@ -35,6 +36,7 @@ import se.kth.id1212.sockets.objprotocolchat.common.MsgType;
  * Manages all communication with the server.
  */
 public class ServerConnection {
+    private static final int TIMEOUT_HALF_HOUR = 1800000;
     private Socket socket;
     private ObjectOutputStream toServer;
     private ObjectInputStream fromServer;
@@ -51,7 +53,9 @@ public class ServerConnection {
      */
     public void connect(String host, int port, OutputHandler broadcastHandler) throws
             IOException {
-        socket = new Socket(host, port);
+        socket = new Socket();
+        socket.connect(new InetSocketAddress(host, port), TIMEOUT_HALF_HOUR);
+        socket.setSoTimeout(TIMEOUT_HALF_HOUR);
         connected = true;
         toServer = new ObjectOutputStream(socket.getOutputStream());
         fromServer = new ObjectInputStream(socket.getInputStream());

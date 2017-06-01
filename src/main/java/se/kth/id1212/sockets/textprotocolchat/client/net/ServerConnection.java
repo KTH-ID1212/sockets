@@ -27,6 +27,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.StringJoiner;
 import se.kth.id1212.sockets.textprotocolchat.common.Constants;
@@ -37,6 +38,7 @@ import se.kth.id1212.sockets.textprotocolchat.common.MsgType;
  * Manages all communication with the server.
  */
 public class ServerConnection {
+    private static final int TIMEOUT_HALF_HOUR = 1800000;
     private Socket socket;
     private PrintWriter toServer;
     private BufferedReader fromServer;
@@ -53,7 +55,9 @@ public class ServerConnection {
      */
     public void connect(String host, int port, OutputHandler broadcastHandler) throws
             IOException {
-        socket = new Socket(host, port);
+        socket = new Socket();
+        socket.connect(new InetSocketAddress(host, port), TIMEOUT_HALF_HOUR);
+        socket.setSoTimeout(TIMEOUT_HALF_HOUR);
         connected = true;
         boolean autoFlush = true;
         toServer = new PrintWriter(socket.getOutputStream(), autoFlush);

@@ -26,8 +26,6 @@ package se.kth.id1212.sockets.objprotocolchat.client.controller;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.concurrent.CompletableFuture;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import se.kth.id1212.sockets.objprotocolchat.client.net.ServerConnection;
 import se.kth.id1212.sockets.objprotocolchat.client.net.OutputHandler;
 
