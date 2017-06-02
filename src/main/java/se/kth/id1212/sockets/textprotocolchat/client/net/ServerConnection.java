@@ -39,6 +39,7 @@ import se.kth.id1212.sockets.textprotocolchat.common.MsgType;
  */
 public class ServerConnection {
     private static final int TIMEOUT_HALF_HOUR = 1800000;
+    private static final int TIMEOUT_HALF_MINUTE = 30000;
     private Socket socket;
     private PrintWriter toServer;
     private BufferedReader fromServer;
@@ -56,7 +57,7 @@ public class ServerConnection {
     public void connect(String host, int port, OutputHandler broadcastHandler) throws
             IOException {
         socket = new Socket();
-        socket.connect(new InetSocketAddress(host, port), TIMEOUT_HALF_HOUR);
+        socket.connect(new InetSocketAddress(host, port), TIMEOUT_HALF_MINUTE);
         socket.setSoTimeout(TIMEOUT_HALF_HOUR);
         connected = true;
         boolean autoFlush = true;
