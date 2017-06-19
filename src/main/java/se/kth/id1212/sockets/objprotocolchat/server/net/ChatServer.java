@@ -57,9 +57,11 @@ public class ChatServer {
      *
      * @param msg The message to broadcast.
      */
-    synchronized void broadcast(String msg) {
+    void broadcast(String msg) {
         contr.appendEntry(msg);
-        clients.forEach((client) -> client.sendMsg(msg));
+        synchronized (clients) {
+            clients.forEach((client) -> client.sendMsg(msg));
+        }
     }
 
     /**
@@ -68,8 +70,10 @@ public class ChatServer {
      *
      * @param handler The handler of the disconnected client.
      */
-    synchronized void removeHandler(ClientHandler handler) {
-        clients.remove(handler);
+    void removeHandler(ClientHandler handler) {
+        synchronized (clients) {
+            clients.remove(handler);
+        }
     }
 
     private void serve() {
