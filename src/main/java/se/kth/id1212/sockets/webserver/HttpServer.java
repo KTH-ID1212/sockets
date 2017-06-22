@@ -36,18 +36,6 @@ public class HttpServer {
     private File rootDir = new File("www");
     private int portNo = 8080;
 
-    /**
-     * @param args The first command line argument is the directory where the server will look for
-     *             requested files, the default value is <code>www</code>. The second argument is
-     *             the port number on which the server will listen, the default is
-     *             <code>8080</code>.
-     */
-    public static void main(String[] args) {
-        HttpServer server = new HttpServer();
-        server.parseArguments(args);
-        server.serve();
-    }
-
     private void serve() {
         try {
             ServerSocket listeningSocket = new ServerSocket(portNo);
@@ -61,6 +49,18 @@ public class HttpServer {
         } catch (IOException e) {
             System.err.println("Server failure.");
         }
+    }
+
+    /**
+     * @param args The first command line argument is the directory where the server will look for
+     *             requested files, the default value is <code>www</code>. The second argument is
+     *             the port number on which the server will listen, the default is
+     *             <code>8080</code>.
+     */
+    public static void main(String[] args) {
+        HttpServer server = new HttpServer();
+        server.parseArguments(args);
+        server.serve();
     }
 
     private void parseArguments(String[] arguments) {
