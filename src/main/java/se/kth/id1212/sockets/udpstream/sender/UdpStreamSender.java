@@ -30,20 +30,12 @@ import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 
 /**
- * Simulates a UDP live stream, by sending a sequence of numbers as fast as possible.
+ * Simulates a UDP live stream, by sending a sequence of numbers.
  */
 public class UdpStreamSender {
     private static final int PORT_NO = 5000;
     private static final int PACKET_SIZE = Integer.BYTES;
-
-    /**
-     * @param args There is one command line parameter, the IP address of the stream destination.
-     * @throws IOException If failed to write stream.
-     */
-    public static void main(String[] args) throws IOException {
-        String destination = args[0];
-        new UdpStreamSender().sendStream(destination);
-    }
+    private static final int MILLISEC = 1;
 
     private void sendStream(String destination) throws IOException {
         DatagramSocket toStream = new DatagramSocket();
@@ -54,10 +46,23 @@ public class UdpStreamSender {
                                                              new InetSocketAddress(destination,
                                                                                    PORT_NO));
             toStream.send(packetToSend);
+            try {
+                Thread.sleep(MILLISEC);
+            } catch (InterruptedException ignore) {
+            }
         }
     }
 
     private byte[] intToByteBuffer(int i) {
         return BigInteger.valueOf(i).toByteArray();
+    }
+
+    /**
+     * @param args There is one command line parameter, the IP address of the stream destination.
+     * @throws IOException If failed to write stream.
+     */
+    public static void main(String[] args) throws IOException {
+        String destination = args[0];
+        new UdpStreamSender().sendStream(destination);
     }
 }

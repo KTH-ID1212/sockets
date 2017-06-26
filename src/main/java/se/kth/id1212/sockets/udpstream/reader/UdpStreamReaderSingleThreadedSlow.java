@@ -24,9 +24,9 @@
 package se.kth.id1212.sockets.udpstream.reader;
 
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.SocketException;
 
 /**
  * A simple UDP stream reader. Reads data from a UDP socket and prints to <code>System.out</code>.
@@ -40,35 +40,22 @@ import java.net.DatagramSocket;
  * rtpjpegpay ! udpsink host=127.0.0.1 port=5000</code>
  * </p>
  */
-public class UdpStreamReader implements Runnable {
+public class UdpStreamReaderSingleThreadedSlow {
     private static final int PORT_NO = 5000;
     private static final int PACKET_SIZE = Integer.BYTES;
-    private ScreenWriter screen = new ScreenWriter();
-    
-    private void start() {
-        new Thread(screen).start();
-        new Thread(this).start();
-    }
-    
-    /**
-     * Receives values and passes them to the <code>ScreenWriter</code>.
-     */
-    @Override
-    public void run() {
-        try {
-            DatagramSocket fromSender = new DatagramSocket(PORT_NO);
-            byte[] receivedData = new byte[PACKET_SIZE];
-            DatagramPacket receivedPacket = new DatagramPacket(receivedData,
-                    receivedData.length);
-            for (;;) {
-                fromSender.receive(receivedPacket);
-                for (int i = 0; i < receivedPacket.getLength(); i++) {
-                    screen.print(unsignedHexString(receivedData[i]));
-                }
-                screen.println();
+    private static final int HEX_RADIX = 16;
+
+    private void handleStream() throws IOException, SocketException {
+        DatagramSocket fromSender = new DatagramSocket(PORT_NO);
+        byte[] receivedData = new byte[PACKET_SIZE];
+        DatagramPacket receivedPacket = new DatagramPacket(receivedData,
+                receivedData.length);
+        for (;;) {
+            fromSender.receive(receivedPacket);
+            for (int i=0; i< receivedPacket.getLength(); i++) {
+                System.out.print(unsignedHexString(receivedData[i]) + " ");
             }
-        } catch (IOException ioe) {
-            throw new UncheckedIOException(ioe);
+            System.out.println();
         }
     }
 
@@ -81,6 +68,6 @@ public class UdpStreamReader implements Runnable {
      * @throws IOException If failed to read stream.
      */
     public static void main(String[] args) throws IOException {
-        new UdpStreamReader().start();
+        new UdpStreamReaderSingleThreadedSlow().handleStream();
     }
 }
