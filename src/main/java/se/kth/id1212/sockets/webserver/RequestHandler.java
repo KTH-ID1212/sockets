@@ -122,8 +122,8 @@ class RequestHandler implements Runnable {
         return source.substring(1, source.length());
     }
 
-    private byte[] readFile(String filePathRelativeRootDir) throws IOException {
-        File file = new File(rootDir, filePathRelativeRootDir);
+    private byte[] readFile(String filePathRelativeToRootDir) throws IOException {
+        File file = new File(rootDir, filePathRelativeToRootDir);
         try (FileInputStream fromFile = new FileInputStream(file)) {
             byte[] buf = new byte[(int) file.length()];
             fromFile.read(buf);
