@@ -43,7 +43,7 @@ public class ServerConnection {
     private Socket socket;
     private PrintWriter toServer;
     private BufferedReader fromServer;
-    private boolean connected;
+    private volatile boolean connected;
 
     /**
      * Creates a new instance and connects to the specified server. Also starts a listener thread
